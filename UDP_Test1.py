@@ -40,30 +40,26 @@ for i in id:
 
     server_address = ('127.0.0.1', 5678)
     message = str(random.randint(1,101)) + ' 50' + ' '+ i
-    print(message)
+    #print(message)
+    try:
 
-    while 1:
-        try:
+        # Send data
+        sent = sock.sendto(message, server_address)
 
-            # Send data
-            sent = sock.sendto(message, server_address)
+        # Receive response
+        data, server = sock.recvfrom(4096)
+	data = data.strip('{ }')
+	#data = data.strip('{')
+        data = data.split()
+        if(int(data[1]) == 1):
+    	    print(data)
+            dp.time = time.time()
+            dp.anchor = data[3]
+            dp.power = data[4]
+            dp.distance = data[2]
+            
 
-            # Receive response
-            #print >>sys.stderr, 'waiting to receive'
-            data, server = sock.recvfrom(4096)
-            print(data)
-            data = str(data)
-            data = data.strip('{')
-            data = data.strip('}')
-            data = data.split()
-            if(data[1] == 1):
-                dp.time = time.time()
-                dp.anchor = data[3]
-                dp.power = data[4]
-                dp.distance = data[2]
-            #print >>sys.stderr, 'received "%s"' % data
-
-        finally:
-            pass
-            #print >>sys.stderr, 'closing socket'
-            #sock.close()
+    finally:
+        pass
+        #print >>sys.stderr, 'closing socket'
+        #sock.close()
