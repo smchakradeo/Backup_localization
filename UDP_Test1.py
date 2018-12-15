@@ -48,15 +48,16 @@ for i in id:
 
         # Receive response
         data, server = sock.recvfrom(4096)
-	data = data.strip('{ }')
-	#data = data.strip('{')
+        data = data.strip('{ }')
         data = data.split()
-        if(int(data[1]) == 1):
-    	    print(data)
-            dp.time = time.time()
-            dp.anchor = data[3]
-            dp.power = data[4]
-            dp.distance = data[2]
+        if(int(data[1]) == '1'):
+            #dp.time = time.time()
+            #dp.anchor = data[3]
+            #dp.power = data[4]
+            #dp.distance = data[2]
+            x = dp.datapoint(time.time(), data[3], data[4], data[2])
+        else:
+            print("Not a valid input")
             
 
     finally:

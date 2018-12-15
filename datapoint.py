@@ -4,3 +4,8 @@ class datapoint:
         self.anchor = anchor
         self.power = power
         self.distance = distance
+        dplist = []
+        dp = [time, anchor, power, distance]
+        dplist.append(dp)
+        print(dplist)
+
