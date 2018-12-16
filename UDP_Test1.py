@@ -1,9 +1,9 @@
 import socket
 import random
 import json
-import datapoint as dp
+from datapoint import datapoint
 import time
-
+import reset_current_datapoints as rcd
 class Anchor:
     def __init__(self, id, x, y, z):
         self.id = id
@@ -16,6 +16,8 @@ class Tag:
         self.ip = ip
         self.user = user
 
+
+dplist = {}
 input_data = open("Config.json", "r")
 json_data = json.load(input_data)
 anchors = [json_data["anchors1"]]
@@ -33,34 +35,41 @@ for i in tags:
     for j in range(len(i)):
         ip.append(i[j]["ip"])
         user.append(i[j]["user"])
+while 1:
+    for i in id:
+        # Create a UDP socket
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-for i in id:
-    # Create a UDP socket
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        server_address = ('127.0.0.1', 5678)
+        message = str(random.randint(1,101)) + ' 50' + ' '+ i
+        #print(message)
+        try:
 
-    server_address = ('127.0.0.1', 5678)
-    message = str(random.randint(1,101)) + ' 50' + ' '+ i
-    #print(message)
-    try:
+            # Send data
+            sent = sock.sendto(message, server_address)
 
-        # Send data
-        sent = sock.sendto(message, server_address)
+            # Receive response
+            data, server = sock.recvfrom(4096)
+            data = data.strip('{ }')
+            data = data.split()
+	    #print(data)
+            if(int(data[1]) == 1):
+                #dp.time = time.time()
+                #dp.anchor = data[3]
+                #dp.power = data[4]
+                #dp.distance = data[2]
+                x = datapoint(time.time(),data[3],data[4],data[2])
+	        values = x.get_dp()
+	        dplist[data[3]] = values
+		#print(dplist)
+		currentDataPoints = rcd.resetcurrentdatapoints(dplist)
+            else:
+                #print("Not a valid input")
+		pass
 
-        # Receive response
-        data, server = sock.recvfrom(4096)
-        data = data.strip('{ }')
-        data = data.split()
-        if(int(data[1]) == '1'):
-            #dp.time = time.time()
-            #dp.anchor = data[3]
-            #dp.power = data[4]
-            #dp.distance = data[2]
-            x = dp.datapoint(time.time(), data[3], data[4], data[2])
-        else:
-            print("Not a valid input")
-            
+        finally:
+            pass
+            #print >>sys.stderr, 'closing socket'
+            #sock.close()
+    	#time.sleep(3)
 
-    finally:
-        pass
-        #print >>sys.stderr, 'closing socket'
-        #sock.close()
