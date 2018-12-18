@@ -6,5 +6,5 @@ def resetcurrentdatapoints(hash):
 		del hash[k]
     for i in hash:
         members.append(hash[i])
-        print(members)
+        #print(members)
     return members

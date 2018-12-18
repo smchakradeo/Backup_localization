@@ -4,6 +4,8 @@ import json
 from datapoint import datapoint
 import time
 import reset_current_datapoints as rcd
+import trilat as tri
+
 class Anchor:
     def __init__(self, id, x, y, z):
         self.id = id
@@ -63,6 +65,11 @@ while 1:
 	        dplist[data[3]] = values
 		#print(dplist)
 		currentDataPoints = rcd.resetcurrentdatapoints(dplist)
+                #print(len(currentDataPoints))
+                if(len(currentDataPoints) >= 3):
+                    tri.trilateration(currentDataPoints)
+                #else:
+                #    print("not enough points")
             else:
                 #print("Not a valid input")
 		pass
