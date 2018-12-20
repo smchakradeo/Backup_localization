@@ -4,7 +4,7 @@ import json
 from datapoint import datapoint
 import time
 import reset_current_datapoints as rcd
-import trilat as tri
+#import trilat as tri
 
 class Anchor:
     def __init__(self, id, x, y, z):
@@ -51,10 +51,10 @@ while 1:
         try:
 
             # Send data
-            sent = sock.sendto(message, server_address)
-
+            sent = sock.sendto(bytes(message.encode()), server_address)
             # Receive response
             data, server = sock.recvfrom(4096)
+            data = data.decode("utf-8")
             data = data.strip('{ }')
             data = data.split()
             if(int(data[1]) == 1):
@@ -65,12 +65,13 @@ while 1:
                     if k == data[3]:
                         if(len(v)<3):
                             v.append(values)
+                            malist[k] = v
                         else:
                             sum_all = 0
                             for ii in range(1, len(v)):
-                                sum_all = sum_all + v[ii][3]
+                                sum_all = sum_all + float(v[ii][3])
                             avg = sum_all/(len(v)-1)
-                            if (values[3] < avg - v[0][0] or values[3] > avg + v[0][0]):
+                            if (float(values[3]) < avg - float(v[0][0]) or float(values[3]) > avg + float(v[0][0])):
                                 v[0][0] = v[0][0] + 0.5
                                 values = v[len(v)-1]
                             else:
@@ -82,9 +83,10 @@ while 1:
                     else:
                         pass
                 dplist[data[3]] = values
+                print(i, ': ', malist[i])
                 currentDataPoints = rcd.resetcurrentdatapoints(dplist)
-                if(len(currentDataPoints) >= 3):
-                    tri.trilateration(currentDataPoints)
+                #if(len(currentDataPoints) >= 3):
+                #    tri.trilateration(currentDataPoints)
             else:
                 pass
         finally:
