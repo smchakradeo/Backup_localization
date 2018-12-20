@@ -20,18 +20,22 @@ class Tag:
 
 
 dplist = {}
+malist = {}
 input_data = open("Config.json", "r")
 json_data = json.load(input_data)
 anchors = [json_data["anchors1"]]
 tags = [json_data["tags1"]]
+values_all = []
 id, x, y, z = [], [], [], []
 ip, user = [], []
+thresh = 4
 for i in anchors:
     for j in range(len(i)):
         id.append(i[j]["id"])
         x.append(i[j]["x"])
         y.append(i[j]["y"])
         z.append(i[j]["z"])
+        malist[i[j]["id"]] = [[thresh]]
 
 for i in tags:
     for j in range(len(i)):
@@ -44,7 +48,6 @@ while 1:
 
         server_address = ('127.0.0.1', 5678)
         message = str(random.randint(1,101)) + ' 50' + ' '+ i
-        #print(message)
         try:
 
             # Send data
@@ -54,29 +57,37 @@ while 1:
             data, server = sock.recvfrom(4096)
             data = data.strip('{ }')
             data = data.split()
-	    #print(data)
             if(int(data[1]) == 1):
-                #dp.time = time.time()
-                #dp.anchor = data[3]
-                #dp.power = data[4]
-                #dp.distance = data[2]
                 x = datapoint(time.time(),data[3],data[4],data[2])
-	        values = x.get_dp()
-	        dplist[data[3]] = values
-		#print(dplist)
-		currentDataPoints = rcd.resetcurrentdatapoints(dplist)
-                #print(len(currentDataPoints))
+                values = x.get_dp()
+
+                for k,v in malist.items():
+                    if k == data[3]:
+                        if(len(v)<3):
+                            v.append(values)
+                        else:
+                            sum_all = 0
+                            for ii in range(1, len(v)):
+                                sum_all = sum_all + v[ii][3]
+                            avg = sum_all/(len(v)-1)
+                            if (values[3] < avg - v[0][0] or values[3] > avg + v[0][0]):
+                                v[0][0] = v[0][0] + 0.5
+                                values = v[len(v)-1]
+                            else:
+                                pass
+                        v.append(values)
+                        v = rcd.resetV(v)
+                        malist[k] = v
+                        break
+                    else:
+                        pass
+                dplist[data[3]] = values
+                currentDataPoints = rcd.resetcurrentdatapoints(dplist)
                 if(len(currentDataPoints) >= 3):
                     tri.trilateration(currentDataPoints)
-                #else:
-                #    print("not enough points")
             else:
-                #print("Not a valid input")
-		pass
-
+                pass
         finally:
             pass
-            #print >>sys.stderr, 'closing socket'
-            #sock.close()
-    	#time.sleep(3)
+
 
