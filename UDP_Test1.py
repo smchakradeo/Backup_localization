@@ -4,7 +4,7 @@ import json
 from datapoint import datapoint
 import time
 import reset_current_datapoints as rcd
-#import trilat as tri
+import trilat as tri
 
 class Anchor:
     def __init__(self, id, x, y, z):
@@ -37,6 +37,7 @@ for i in anchors:
         z.append(i[j]["z"])
         malist[i[j]["id"]] = [[thresh]]
 
+
 for i in tags:
     for j in range(len(i)):
         ip.append(i[j]["ip"])
@@ -63,9 +64,11 @@ while 1:
 
                 for k,v in malist.items():
                     if k == data[3]:
+                        v = rcd.resetV(v)
                         if(len(v)<3):
                             v.append(values)
                             malist[k] = v
+                            break
                         else:
                             sum_all = 0
                             for ii in range(1, len(v)):
@@ -74,11 +77,12 @@ while 1:
                             if (float(values[3]) < avg - float(v[0][0]) or float(values[3]) > avg + float(v[0][0])):
                                 v[0][0] = v[0][0] + 0.5
                                 values = v[len(v)-1]
+                                v.append(values)
+                                malist[k] = v
                             else:
+                                v.append(values)
+                                malist[k] = v
                                 pass
-                        v.append(values)
-                        v = rcd.resetV(v)
-                        malist[k] = v
                         break
                     else:
                         pass
