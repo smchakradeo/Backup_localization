@@ -11,10 +11,10 @@ def resetcurrentdatapoints(hash1):
     return members
 def resetV(v_current):
     mem = []
-    for i in range(1, len(v_current)):
+    for i in range(1, len(v_current)-1):
         if((time.time() - v_current[i][0]>5)):
             print('Being Popped:' , v_current[i], 'At Time :' , (time.time()-v_current[i][0]))
             mem.append(i)
-    for ii in range(len(mem)):
+    for ii in range(1, len(mem)-1):
         del v_current[mem[ii]]
     return v_current

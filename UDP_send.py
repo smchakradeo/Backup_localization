@@ -9,5 +9,5 @@ s.listen(5)
 while True:
   c, addr = s.accept()
   print ('Got connection from',addr)
-  c.send('Hello There!')
+  c.send('Thank you for connecting')
   c.close()

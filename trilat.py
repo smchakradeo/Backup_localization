@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0,"/home/pi/.local/lib/python3.5/site-packages/localization")
 import localization as lx
 import json
 
@@ -27,5 +29,6 @@ def trilateration(hash_list):
     try:        
         P.solve()
         print(t.loc)
+        return t.loc
     except ZeroDivisionError:
         pass
