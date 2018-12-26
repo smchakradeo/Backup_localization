@@ -2,13 +2,17 @@ import time
 import numpy as np
 def resetcurrentdatapoints(hash1):
     members = []
-
+    mem_del = []
     for k,v in hash1.items():
-        if((time.time() - float(v[0])) > 10):
-            del hash1[k]
-    for i in hash1:
-        members.append(hash1[i])
-    return members
+        if((time.time() - float(v[0])) > 4):
+            print('deleted: ', hash1[k], 'time: ', time.time()-float(v[0]))
+            #del hash1[k]
+        else:
+            mem_del.append(hash1[k])
+    #for i in hash1:
+    #    members.append(hash1[i])
+    print('length: ', mem_del)
+    return mem_del
 def resetV(v_current):
     mem = []
     for i in range(1, len(v_current)-1):
