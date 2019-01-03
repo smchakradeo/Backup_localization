@@ -6,8 +6,6 @@ import time
 import reset_current_datapoints as rcd
 import trilat as tri
 import numpy as np
-from signal import signal, SIGPIPE, SIG_DFL
-signal(SIGPIPE, SIG_DFL)
 class Anchor:
     def __init__(self, id, x, y, z):
         self.id = id
@@ -30,9 +28,9 @@ class Tag:
         self.user = user
     def update_xy(self,x,y,z,time_T):
         if(not self.ini):
-            if( time_T-self.time_T <= 2):
+            if( time_T-self.time_T <= 3):
                 self.dist = np.sqrt((self.x - x) ** 2 + (self.y - y) ** 2 + (self.z - z) ** 2)
-                if(self.dist<=3):
+                if(self.dist<=5):
                     self.px = self.x
                     self.py = self.y
                     self.pz = self.z
@@ -76,11 +74,11 @@ thresh = 2
 socket_for_sending = socket.socket()
 host = '192.168.50.145'
 port = 12345
-socket_for_sending.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR, 1)
+socket_for_sending.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 socket_for_sending.bind((host,port))
-socket_for_sending.listen(1)
+socket_for_sending.listen(1) 
 
-tag = Tag(time.time(),host,"vehicle2")
+tag = Tag(time.time(),host,"vehicle1")
 for i in anchors:
     for j in range(len(i)):
         id.append(i[j]["id"])
@@ -93,47 +91,42 @@ for i in tags:
     for j in range(len(i)):
         ip.append(i[j]["ip"])
         user.append(i[j]["user"])
+#create UDP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-server_address = ('127.0.0.1', 5678)
-message = str(random.randint(1,101)) + ' 50' + ' '+ '0'
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-server_address = ('127.0.0.1', 5678)
-
+server_address = ('127.0.0.1',5678)
 while 1:
+    #On board sensor collection
+    rdm_num = random.randint(1,100)
+    message2 = str(rdm_num) + ' 51'
+    sent2 = sock.sendto(bytes(message2.encode()), server_address)
+    data2, server2 = sock.recvfrom(4096)
+    data2 = data2.decode("utf-8")
+    data2 = data2.strip('{ }')
+    data2 = data2.split()
     for i in id:
-        # Create a UDP socket
-        #sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        #server_address = ('127.0.0.1', 5678)
-        message = str(random.randint(1,101)) + ' 50' + ' '+ '0'
+        message1 = str(rdm_num) + ' 50' + ' '+ i
         try:
 
             # Send data
-            sent = sock.sendto(bytes(message.encode()), server_address)
+            sent1 = sock.sendto(bytes(message1.encode()), server_address)
             # Receive response
-            data, server = sock.recvfrom(4096)
-            data = data.decode("utf-8")
-            print('data: ', data)
-            data = data.strip('{ }')
-            data = data.split()
-            if(int(data[1]) == 1):
-                x = datapoint(time.time(),data[3],data[4],data[2])
+            data1, server1 = sock.recvfrom(4096)
+            data1 = data1.decode("utf-8")
+            data1 = data1.strip('{ }')
+            data1 = data1.split()
+            print('data1: ', data1) 
+            if((int(data1[1]) == 1) and (not (int(data2[1]) == 255)) and len(data2) == 14):
+                x = datapoint(time.time(),data1[3],data1[4],data1[2])
                 values = x.get_dp()
-                dplist[data[3]] = values
+                dplist[data1[3]] = values
                 currentDataPoints = rcd.resetcurrentdatapoints(dplist)
                 if(len(currentDataPoints) >= 3):
-                    location_tag =  tri.trilateration(currentDataPoints[0:4])
+                    location_tag =  tri.trilateration(currentDataPoints)
                     tag.update_xy(location_tag.x,location_tag.y,location_tag.z,time.time())
-                else:
-                    pass
-                print('(', 'Actual point: ', tag.x, ' ', tag.y, ' ', tag.z, ')')
                 cc1, addr1 = socket_for_sending.accept()
-                socket_for_sending.send(bytes(str([str(tag.x), str(tag.y), str(tag.z), tag.user]).encode()))
-                cc1.close()
+                cc1.send(bytes(str([time.time(), data2[3],data2[4],data2[5],data2[6],data2[7],data2[8],data2[9],data2[10],data2[11], str(tag.x), str(tag.y), tag.user]).encode()))
+                #cc1.close()
             else:
-                #socket_for_sending.send(bytes(str(0).encode()),('<broadcast>',port))
                 pass
         finally:
             pass
-
-
-
