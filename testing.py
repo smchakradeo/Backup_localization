@@ -1,4 +1,5 @@
 import socket
+import math
 import random
 import json
 from datapoint import datapoint
@@ -61,9 +62,12 @@ while 1:
             data = data.strip('{ }')
             data = data.split()
             if((not (int(data[1]) == 255)) and len(data) == 14):
-                print('Acc: ', data[3], ' ',data[4],' ',data[5],' ','Gyro: ',data[6],' ',data[7],' ',data[8],' ','Mag: ',data[9],' ',data[10],' ',data[11])
+                #print('Acc: ', data[3], ' ',data[4],' ',data[5],' ','Gyro: ',data[6],' ',data[7],' ',data[8],' ','Mag: ',data[9],' ',data[10],' ',data[11])
                 tot = (float(data[3])**2+float(data[4])**2+float(data[5])**2)**0.5
-                print('Total: ', tot)
+                print('Mag: ',data[9],' | ',data[10],' | ', data[11])
+                theta = math.degrees(math.atan2((float(data[4])/tot),(float(data[3])/tot)))
+                alpha = math.degrees(math.atan2((float(data[5])/tot),(((float(data[3])**2+float(data[4])**2))**0.5)/tot))
+                #print('Acc: ', data[3], ' ',data[4],' ',data[5], '| Alpha: ', alpha, ' |Theta: ', theta)
                 time.sleep(0.1)
         finally:
             pass

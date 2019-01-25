@@ -56,7 +56,7 @@ class Tag:
             self.py = self.y
             self.pz = self.z
             self.time_T = time_T
-            self.ini = False
+            #self.ini = False
 
 
 
