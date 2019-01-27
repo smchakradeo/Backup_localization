@@ -4,7 +4,7 @@ import json
 from datapoint import datapoint
 import time
 import reset_current_datapoints as rcd
-import trilat as tri
+#import trilat as tri
 import numpy as np
 class Anchor:
     def __init__(self, id, x, y, z):
