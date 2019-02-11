@@ -71,7 +71,7 @@ def filesave(data_save):
     #data_save = data_save.strip()
     #data_save = str(data_save).strip('[ ]')
     #data_save = data_save.strip("' '")
-    inp1 = open("Distance_and_Acceleration_Data1.txt", "a+")
+    inp1 = open("temperory.txt", "a+")
     inp1.write(data_save)
     inp1.write("\n")
     inp1.close()
@@ -112,6 +112,7 @@ while 1:
             if((int(data1[1]) == 1) and (not (int(data2[1]) == 255)) and len(data2) == 14):
                 data_new = str([time.time(), tag.ip, data1[2], data1[3], data2[3], data2[4], data2[5], data2[6], data2[7], data2[8], data2[9], data2[10],data2[11], data1[4]])
                 filesave(data_new)
+                print('1: ', data_new)
                 #x = datapoint(time.time(),data1[3],data1[4],data1[2])
                 #values = x.get_dp()
                 #dplist[data1[3]] = values
@@ -122,6 +123,14 @@ while 1:
                 #cc1, addr1 = socket_for_sending.accept()
                 #cc1.send(bytes(str([time.time(), data2[3], data2[4], data2[5], data2[6], data2[7], data2[8], data2[9], data2[10],data2[11]]).encode()))
                 # cc1.close()
+            elif((int(data1[1]) == 1) and (int(data2[1]) == 255)):
+                data_new = str([time.time(), tag.ip, data1[2], data1[3], data1[4]])
+                filesave(data_new)
+                print('2: ',data_new)
+            elif(not (int(data1[1]) == 1) and (not (int(data2[1]) == 255)) and len(data2) == 14):
+                data_new = str([time.time(), tag.ip, data2[3], data2[4], data2[5], data2[6], data2[7], data2[8], data2[9], data2[10],data2[11]])
+                print('3: ',data_new)
+                filesave(data_new)
             else:
                 pass
         finally:
