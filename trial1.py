@@ -110,7 +110,7 @@ while 1:
             data2 = data2.split()
             #print('data1: ', data1)
             if((int(data1[1]) == 1) and (not (int(data2[1]) == 255)) and len(data2) == 14):
-                data_new = str([time.time(), tag.ip, data1[2], data1[3], data2[3], data2[4], data2[5], data2[6], data2[7], data2[8], data2[9], data2[10],data2[11], data1[4]])
+                data_new = str([data2[2], tag.ip, data1[2], data1[3], data2[3], data2[4], data2[5], data2[6], data2[7], data2[8], data2[9], data2[10],data2[11], data2[12], data1[4]])
                 filesave(data_new)
                 print('1: ', data_new)
                 #x = datapoint(time.time(),data1[3],data1[4],data1[2])
@@ -124,11 +124,11 @@ while 1:
                 #cc1.send(bytes(str([time.time(), data2[3], data2[4], data2[5], data2[6], data2[7], data2[8], data2[9], data2[10],data2[11]]).encode()))
                 # cc1.close()
             elif((int(data1[1]) == 1) and (int(data2[1]) == 255)):
-                data_new = str([time.time(), tag.ip, data1[2], data1[3], data1[4]])
+                data_new = str([time.time(), tag.ip, data1[2], data1[3],"NA", "NA", "NA", "NA","NA","NA","NA","NA","NA","NA", data1[4]])
                 filesave(data_new)
                 print('2: ',data_new)
             elif(not (int(data1[1]) == 1) and (not (int(data2[1]) == 255)) and len(data2) == 14):
-                data_new = str([time.time(), tag.ip, data2[3], data2[4], data2[5], data2[6], data2[7], data2[8], data2[9], data2[10],data2[11]])
+                data_new = str([data2[2], tag.ip,"NA","NA", data2[3], data2[4], data2[5], data2[6], data2[7], data2[8], data2[9], data2[10],data2[11],data2[12], "NA"])
                 print('3: ',data_new)
                 filesave(data_new)
             else:
