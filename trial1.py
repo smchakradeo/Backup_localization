@@ -60,7 +60,7 @@ id, x, y, z = [], [], [], []
 ip, user = [], []
 thresh = 2
 #socket_for_sending = socket.socket()
-host = '192.168.50.145'
+host = '192.168.50.254'
 port = 12345
 #socket_for_sending.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 #socket_for_sending.bind((host,port))
@@ -71,7 +71,7 @@ def filesave(data_save):
     #data_save = data_save.strip()
     #data_save = str(data_save).strip('[ ]')
     #data_save = data_save.strip("' '")
-    inp1 = open("temp.txt", "a+")
+    inp1 = open("vehicle_1_back.txt", "a+")
     inp1.write(data_save)
     inp1.write("\n")
     inp1.close()
@@ -112,13 +112,16 @@ while 1:
             #print('data1: ', data1)
             if((int(data1[1]) == 1) and (not (int(data2[1]) == 255)) and len(data2) == 14):
                 data_new = str([data2[2], tag.ip, data1[2], data1[3], data2[3], data2[4], data2[5], data2[6], data2[7], data2[8], data2[9], data2[10],data2[11], data2[12], data1[4]])
+                print('1: ', data_new)
                 filesave(data_new)
             elif((int(data1[1]) == 1) and (int(data2[1]) == 255)):
                 data_new = str([time.time()*1000, tag.ip, data1[2], data1[3],"NA", "NA", "NA", "NA","NA","NA","NA","NA","NA","NA", data1[4]])
+                print('2: ', data_new)
                 filesave(data_new)
             elif(not (int(data1[1]) == 1) and (not (int(data2[1]) == 255)) and len(data2) == 14):
                 data_new = str([data2[2], tag.ip,"NA","NA", data2[3], data2[4], data2[5], data2[6], data2[7], data2[8], data2[9], data2[10],data2[11],data2[12], "NA"])
                 print('3: ',data_new)
+                filesave(data_new)
             else:
                 pass
         finally:

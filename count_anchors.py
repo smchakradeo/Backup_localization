@@ -23,7 +23,7 @@ for i in id:
    count_var[i] = 0
    
    
-f = open("vehicle_1_back.txt")
+f = open("temp.txt")
 line = f.readline()
 while line:
 	line = f.readline()
